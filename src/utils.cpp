@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <string>
+#include <stdexcept> // Para std::invalid_argument
 
 // Função auxiliar para verificar se um número é potência de 2
 bool isPowerOfTwo(int n) {
@@ -68,4 +69,16 @@ bool isValidArg(int argc, char* argv[]) {
     file.close();
 
     return true;
+}
+
+int log2(int n) {
+    if (n <= 0 || (n & (n - 1)) != 0) { // Garante que n é potência de 2 e positivo
+        throw std::invalid_argument("log2: n deve ser uma potência de 2 e positivo.");
+    }
+    int bits = 0;
+    while (n > 1) {
+        n >>= 1; // Desloca bits para a direita (equivalente a dividir por 2)
+        bits++;
+    }
+    return bits;
 }

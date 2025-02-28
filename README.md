@@ -16,7 +16,7 @@
 
 ## **Implementação do Núcleo da Cache**
 3. **Cálculo de Bits (Offset, Índice, Tag)**
-   - [ ] Implementar `log2` para calcular bits de offset (`n_bits_offset = log2(bsize)`).
+   - [X] Implementar `log2` para calcular bits de offset (`n_bits_offset = log2(bsize)`).
    - [ ] Calcular bits de índice (`n_bits_indice = log2(nsets)`).
    - [ ] Calcular bits de tag (`n_bits_tag = 32 - n_bits_offset - n_bits_indice`).
 
