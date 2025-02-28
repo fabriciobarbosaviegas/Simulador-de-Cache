@@ -3,11 +3,12 @@
 
 ## **Setup Inicial**
 1. **Estrutura do Projeto**
-   - [ ] Criar diretórios: `src/`, `include/`, `tests/`.
-   - [ ] Definir arquivos principais: `main.cpp`, `cache.cpp`, `cache.h`, `utils.cpp`, `utils.h`.
-   - [ ] Configurar compilação com `Makefile` ou `CMakeLists.txt`.
+   - [X] Criar diretórios: `src/`, `include/`, `tests/`.
+   - [X] Definir arquivos principais: `main.cpp`, `cache.cpp`, `cache.h`, `utils.cpp`, `utils.h`.
+   - [X] Configurar compilação com `Makefile` ou `CMakeLists.txt`.
 
 2. **Parsing de Argumentos de Linha de Comando**
+   - [X] Pegar entrada: `nsets`, `bsize`, `assoc`, `substituição`, `flag_saida`, `arquivo_de_entrada`.
    - [ ] Validar entrada: `nsets`, `bsize`, `assoc`, `substituição`, `flag_saida`, `arquivo_de_entrada`.
    - [ ] Garantir que `nsets`, `bsize` e `assoc` sejam potências de 2 (exceto `assoc=1` para mapeamento direto).
 
