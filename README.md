@@ -9,8 +9,8 @@
 
 2. **Parsing de Argumentos de Linha de Comando**
    - [X] Pegar entrada: `nsets`, `bsize`, `assoc`, `substituição`, `flag_saida`, `arquivo_de_entrada`.
-   - [ ] Validar entrada: `nsets`, `bsize`, `assoc`, `substituição`, `flag_saida`, `arquivo_de_entrada`.
-   - [ ] Garantir que `nsets`, `bsize` e `assoc` sejam potências de 2 (exceto `assoc=1` para mapeamento direto).
+   - [X] Validar entrada: `nsets`, `bsize`, `assoc`, `substituição`, `flag_saida`, `arquivo_de_entrada`.
+   - [X] Garantir que `nsets`, `bsize` e `assoc` sejam potências de 2 (exceto `assoc=1` para mapeamento direto).
 
 ---
 

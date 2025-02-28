@@ -3,11 +3,11 @@
 #include "utils.h"
 
 int main(int argc, char *argv[]){
-    if(argc != 7){
-        std::cerr << "Uso: ./cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_entrada\n";
-        return 1;
+    if(isValidArg(argc, argv)){
+        return 0;
     }
     else{
+        return 1;
     }
     return 0;
 }
