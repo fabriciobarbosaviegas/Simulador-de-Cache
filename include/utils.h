@@ -6,6 +6,6 @@
 #include <string>
 
 bool isValidArg(int argc, char *argv[]);
-int log2(int n);
+void calcBits(int bsize, int nsets, int &offset_bits, int &index_bits, int &tag_bits);
 
 #endif // UTILS_H
