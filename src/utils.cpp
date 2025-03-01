@@ -84,11 +84,12 @@ int log2(int n) {
     return bits;
 }
 
+// Faz os calculos necessarios para usar os bits
 void calcBits(int bsize, int nsets, int &offset_bits, int &index_bits, int &tag_bits) {
     try {
-        offset_bits = log2(bsize);   // Já implementado
-        index_bits = log2(nsets);    // Novo cálculo
-        tag_bits = 32 - offset_bits - index_bits; // Novo cálculo
+        offset_bits = log2(bsize); 
+        index_bits = log2(nsets);
+        tag_bits = 32 - offset_bits - index_bits;
     } catch (const std::invalid_argument& e) {
         throw std::invalid_argument("Erro em calcularBits: " + std::string(e.what()));
     }
