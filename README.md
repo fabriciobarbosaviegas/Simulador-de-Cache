@@ -16,14 +16,14 @@
 
 ## **Implementação do Núcleo da Cache**
 3. **Cálculo de Bits (Offset, Índice, Tag)**
-   - [ ] Implementar `log2` para calcular bits de offset (`n_bits_offset = log2(bsize)`).
-   - [ ] Calcular bits de índice (`n_bits_indice = log2(nsets)`).
-   - [ ] Calcular bits de tag (`n_bits_tag = 32 - n_bits_offset - n_bits_indice`).
+   - [X] Implementar `log2` para calcular bits de offset (`n_bits_offset = log2(bsize)`).
+   - [X] Calcular bits de índice (`n_bits_indice = log2(nsets)`).
+   - [X] Calcular bits de tag (`n_bits_tag = 32 - n_bits_offset - n_bits_indice`).
 
 4. **Estrutura de Dados da Cache**
    - [ ] Criar uma classe `Cache` com:
-     - Arrays para armazenar tags, bits de validade e metadados de substituição.
-     - Métodos para buscar/inserir blocos.
+     - [ ] Arrays para armazenar tags, bits de validade e metadados de substituição.
+     - [ ] Métodos para buscar/inserir blocos.
    - [ ] Mapear conjuntos: `n_sets = nsets`, cada conjunto com `assoc` vias.
 
 5. **Leitura do Arquivo Binário**

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <string>
+#include <stdexcept> // Para std::invalid_argument
 
 // Função auxiliar para verificar se um número é potência de 2
 bool isPowerOfTwo(int n) {
@@ -68,4 +69,27 @@ bool isValidArg(int argc, char* argv[]) {
     file.close();
 
     return true;
+}
+
+// Calcula log2
+int log2(int n) {
+    if (n <= 0 || (n & (n - 1)) != 0) { // Garante que n é potência de 2 e positivo
+        throw std::invalid_argument("log2: n deve ser uma potência de 2 e positivo.");
+    }
+    int bits = 0;
+    while (n > 1) {
+        n >>= 1; // Desloca bits para a direita (equivalente a dividir por 2)
+        bits++;
+    }
+    return bits;
+}
+
+void calcBits(int bsize, int nsets, int &offset_bits, int &index_bits, int &tag_bits) {
+    try {
+        offset_bits = log2(bsize);   // Já implementado
+        index_bits = log2(nsets);    // Novo cálculo
+        tag_bits = 32 - offset_bits - index_bits; // Novo cálculo
+    } catch (const std::invalid_argument& e) {
+        throw std::invalid_argument("Erro em calcularBits: " + std::string(e.what()));
+    }
 }
