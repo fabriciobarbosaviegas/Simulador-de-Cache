@@ -113,7 +113,7 @@ std::vector<uint32_t> readBinFile(const std::string &nome_arquivo) {
             endereco = __builtin_bswap32(endereco);
         #endif
         enderecos.push_back(endereco);
-        printf("Endereco: %u", endereco);
+        printf("Endereco: %u\n", endereco);
     }
 
     return enderecos;
