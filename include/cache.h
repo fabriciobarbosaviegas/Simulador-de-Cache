@@ -13,16 +13,14 @@ private:
     int index_bits;         // Bits de índice
     int tag_bits;           // Bits de tag
 
-    // Estrutura da cache: sets[conjunto][via]
+    // Estrutura da cache: conjuntos[índice][via]
     std::vector<std::vector<uint32_t>> tags;  // Tags dos blocos
     std::vector<std::vector<bool>> valid;     // Bits de validade
 
-    // Estatísticas
+    // Estatísticas básicas
     uint64_t total_acessos = 0;
     uint64_t hits = 0;
-    uint64_t misses_compulsorios = 0;
-    uint64_t misses_capacidade = 0;
-    uint64_t misses_conflito = 0;
+    uint64_t misses = 0;
 
 public:
     Cache(int nsets, int bsize, int assoc);
