@@ -21,10 +21,10 @@
    - [X] Calcular bits de tag (`n_bits_tag = 32 - n_bits_offset - n_bits_indice`).
 
 4. **Estrutura de Dados da Cache**
-   - [ ] Criar uma classe `Cache` com:
-     - [ ] Arrays para armazenar tags, bits de validade e metadados de substituição.
-     - [ ] Métodos para buscar/inserir blocos.
-   - [ ] Mapear conjuntos: `n_sets = nsets`, cada conjunto com `assoc` vias.
+   - [X] Criar uma classe `Cache` com:
+     - [X] Arrays para armazenar tags, bits de validade e metadados de substituição.
+     - [X] Métodos para buscar/inserir blocos.
+   - [X] Mapear conjuntos: `n_sets = nsets`, cada conjunto com `assoc` vias.
 
 5. **Leitura do Arquivo Binário**
    - [ ] Ler endereços de 32 bits em formato big-endian.
