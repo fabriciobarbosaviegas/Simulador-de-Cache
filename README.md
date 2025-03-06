@@ -88,8 +88,8 @@
     - [ ] Comentar código para explicar funções críticas.
 
 18. **Tratamento de Erros**
-    - [ ] Validar arquivo de entrada (existência, formato binário).
-    - [ ] Tratar entradas inválidas (ex: `nsets=0`, `assoc > nsets`).
+    - [X] Validar arquivo de entrada (existência, formato binário).
+    - [X] Tratar entradas inválidas (ex: `nsets=0`, `assoc > nsets`).
 
 19. **Otimizações**
     - [ ] Usar estruturas eficientes para LRU (ex: listas encadeadas).

@@ -4,6 +4,13 @@
 #include <vector>
 #include <cstdint>
 
+// Estrutura de um bloco da cache
+struct Bloco {
+    uint32_t tag;        // Tag do bloco
+    bool valid;          // Bit de validade
+    uint64_t fifo_counter; // Contador FIFO (ordem de inserção)
+};
+
 class Cache {
 private:
     int nsets;              // Número de conjuntos
@@ -13,14 +20,15 @@ private:
     int index_bits;         // Bits de índice
     int tag_bits;           // Bits de tag
 
-    // Estrutura da cache: conjuntos[índice][via]
-    std::vector<std::vector<uint32_t>> tags;  // Tags dos blocos
-    std::vector<std::vector<bool>> valid;     // Bits de validade
+    std::vector<std::vector<Bloco>> conjuntos; // conjuntos[índice][via]
+    uint64_t global_counter = 0; // Contador global para FIFO
 
-    // Estatísticas básicas
+    // Estatísticas
     uint64_t total_acessos = 0;
     uint64_t hits = 0;
-    uint64_t misses = 0;
+    uint64_t misses_compulsorios = 0;
+    uint64_t misses_capacidade = 0;
+    uint64_t misses_conflito = 0;
 
 public:
     Cache(int nsets, int bsize, int assoc);
