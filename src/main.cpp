@@ -4,10 +4,10 @@
 
 int main(int argc, char *argv[]){
     if(isValidArg(argc, argv)){
+        std::vector<uint32_t> enderecos = readBinFile(argv[6]);
         return 0;
     }
     else{
         return 1;
     }
-    return 0;
 }

@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 #include <stdexcept> // Para std::invalid_argument
+#include <vector>
+#include <cstdint>
 
 // Função auxiliar para verificar se um número é potência de 2
 bool isPowerOfTwo(int n) {
@@ -93,4 +95,26 @@ void calcBits(int bsize, int nsets, int &offset_bits, int &index_bits, int &tag_
     } catch (const std::invalid_argument& e) {
         throw std::invalid_argument("Erro em calcularBits: " + std::string(e.what()));
     }
+}
+
+std::vector<uint32_t> readBinFile(const std::string &nome_arquivo) {
+    std::ifstream file(nome_arquivo, std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Erro ao abrir o arquivo: " + nome_arquivo);
+    }
+
+    std::vector<uint32_t> enderecos;
+    uint32_t endereco;
+
+    // Lê 4 bytes (32 bits) por vez
+    while (file.read(reinterpret_cast<char*>(&endereco), sizeof(uint32_t))) {
+        // Converte de big-endian para little-endian (se necessário)
+        #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+            endereco = __builtin_bswap32(endereco);
+        #endif
+        enderecos.push_back(endereco);
+        printf("Endereco: %u", endereco);
+    }
+
+    return enderecos;
 }

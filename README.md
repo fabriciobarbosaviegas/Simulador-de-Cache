@@ -27,8 +27,8 @@
    - [X] Mapear conjuntos: `n_sets = nsets`, cada conjunto com `assoc` vias.
 
 5. **Leitura do Arquivo Binário**
-   - [ ] Ler endereços de 32 bits em formato big-endian.
-   - [ ] Converter cada endereço para tag, índice e offset (usar bitwise operations).
+   - [X] Ler endereços de 32 bits em formato big-endian.
+   - [X] Converter cada endereço para tag, índice e offset (usar bitwise operations).
 
 ---
 
