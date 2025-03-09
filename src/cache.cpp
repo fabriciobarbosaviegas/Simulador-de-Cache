@@ -106,12 +106,16 @@ void Cache::exibirEstatisticas(int flag_saida) const {
     double conflictMissRatio   = (totalMisses > 0) ? static_cast<double>(misses_conflito) / totalMisses : 0.0;
     
     if (flag_saida == 0) {
-        std::cout << "Total de acessos: " << total_acessos << "\n";
-        std::cout << "Hits: " << hits << " (" << hitRatio * 100 << "%)\n";
-        std::cout << "Misses: " << totalMisses << "\n";
-        std::cout << "  - Misses compulsorios: " << misses_compulsorios << "\n";
-        std::cout << "  - Misses de capacidade: " << misses_capacidade << "\n";
-        std::cout << "  - Misses de conflito: " << misses_conflito << "\n";
+        std::cout << "+-------------------------+-----------------+\n";
+        std::cout << "| Estatísticas            | Valores         |\n";
+        std::cout << "+-------------------------+-----------------+\n";
+        std::cout << "| Total de acessos        | " << total_acessos << "\n";
+        std::cout << "| Hits                    | " << hits << " (" << hitRatio * 100 << "%)\n";
+        std::cout << "| Misses                  | " << totalMisses << "\n";
+        std::cout << "| Misses compulsorios     | " << misses_compulsorios << "\n";
+        std::cout << "| Misses de capacidade    | " << misses_capacidade << "\n";
+        std::cout << "| Misses de conflito      | " << misses_conflito << "\n";
+        std::cout << "+-------------------------+-----------------+\n";
     } else {
         // Formatação conforme output esperado
         printf("%d %.4lf %.4lf %.2lf %.2lf %.2lf\n",
