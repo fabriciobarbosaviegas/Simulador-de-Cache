@@ -38,8 +38,8 @@
    - [X] Substituir o bloco mais antigo em caso de miss.
 
 7. **Implementar LRU (L)**
-   - [ ] Rastrear o último uso de cada bloco (timestamp ou contador).
-   - [ ] Substituir o bloco menos recentemente usado.
+   - [X] Rastrear o último uso de cada bloco (timestamp ou contador).
+   - [X] Substituir o bloco menos recentemente usado.
 
 8. **Implementar Random (R)**
    - [ ] Gerar índice aleatório para substituição em caso de miss.
@@ -60,11 +60,11 @@
 
 ## **Estatísticas e Saída**
 12. **Contadores de Acesso**
-    - [ ] Total de acessos, hits, misses (compulsórios, capacidade, conflito).
+    - [X] Total de acessos, hits, misses (compulsórios, capacidade, conflito).
 
 13. **Formatação de Saída**
     - [ ] Modo `flag_saida=0`: Saída legível (ex: `Taxa de hits: 95%`).
-    - [ ] Modo `flag_saida=1`: Saída em CSV (ex: `100000, 0.95, 0.05, 0.01, 0.02, 0.02`).
+    - [X] Modo `flag_saida=1`: Saída em CSV (ex: `100000, 0.95, 0.05, 0.01, 0.02, 0.02`).
 
 ---
 
@@ -92,5 +92,5 @@
     - [X] Tratar entradas inválidas (ex: `nsets=0`, `assoc > nsets`).
 
 19. **Otimizações**
-    - [ ] Usar estruturas eficientes para LRU (ex: listas encadeadas).
+    - [X] Usar estruturas eficientes para LRU (ex: listas encadeadas).
     - [ ] Evitar cálculos redundantes (ex: pré-calcular máscaras de bits).
