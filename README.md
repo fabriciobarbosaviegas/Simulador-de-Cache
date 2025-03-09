@@ -42,19 +42,19 @@
    - [X] Substituir o bloco menos recentemente usado.
 
 8. **Implementar Random (R)**
-   - [ ] Gerar índice aleatório para substituição em caso de miss.
+   - [X] Gerar índice aleatório para substituição em caso de miss.
 
 ---
 
 ## **Classificação de Misses**
 9. **Miss Compulsório**
-   - [ ] Ocorre quando o bloco é acessado pela primeira vez (bit de validade = 0).
+   - [X] Ocorre quando o bloco é acessado pela primeira vez (bit de validade = 0).
 
 10. **Miss de Capacidade**
-    - [ ] Ocorre em caches totalmente associativas (`assoc = capacidade_total`) quando todos os blocos estão ocupados.
+    - [X] Ocorre em caches totalmente associativas (`assoc = capacidade_total`) quando todos os blocos estão ocupados.
 
 11. **Miss de Conflito**
-    - [ ] Ocorre em caches mapeadas por conjunto quando há colisão de tags no mesmo conjunto.
+    - [X] Ocorre em caches mapeadas por conjunto quando há colisão de tags no mesmo conjunto.
 
 ---
 
@@ -63,29 +63,29 @@
     - [X] Total de acessos, hits, misses (compulsórios, capacidade, conflito).
 
 13. **Formatação de Saída**
-    - [ ] Modo `flag_saida=0`: Saída legível (ex: `Taxa de hits: 95%`).
+    - [X] Modo `flag_saida=0`: Saída legível (ex: `Taxa de hits: 95%`).
     - [X] Modo `flag_saida=1`: Saída em CSV (ex: `100000, 0.95, 0.05, 0.01, 0.02, 0.02`).
 
 ---
 
 ## **Testes e Validação**
 14. **Testes Básicos**
-    - [ ] Testar mapeamento direto (`assoc=1`).
-    - [ ] Testar caches totalmente associativas (`nsets=1`).
+    - [X] Testar mapeamento direto (`assoc=1`).
+    - [X] Testar caches totalmente associativas (`nsets=1`).
 
 15. **Arquivos de Exemplo**
-    - [ ] Verificar saída com os arquivos de teste fornecidos (ex: `bin_100.bin` deve retornar `100 0.92 0.08 1.00 0.00 0.00`).
+    - [X] Verificar saída com os arquivos de teste fornecidos (ex: `bin_100.bin` deve retornar `100 0.92 0.08 1.00 0.00 0.00`).
 
 16. **Depuração**
-    - [ ] Adicionar logs para rastrear hits/misses durante a execução.
-    - [ ] Validar cálculos de bits e mapeamento de endereços.
+    - [X] Adicionar logs para rastrear hits/misses durante a execução.
+    - [X] Validar cálculos de bits e mapeamento de endereços.
 
 ---
 
 ## **Extras e Otimizações**
 17. **Documentação**
     - [ ] Escrever `README.md` com instruções de compilação e uso.
-    - [ ] Comentar código para explicar funções críticas.
+    - [X] Comentar código para explicar funções críticas.
 
 18. **Tratamento de Erros**
     - [X] Validar arquivo de entrada (existência, formato binário).
@@ -93,4 +93,4 @@
 
 19. **Otimizações**
     - [X] Usar estruturas eficientes para LRU (ex: listas encadeadas).
-    - [ ] Evitar cálculos redundantes (ex: pré-calcular máscaras de bits).
+    - [X] Evitar cálculos redundantes (ex: pré-calcular máscaras de bits).

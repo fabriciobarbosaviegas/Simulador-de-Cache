@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cctype>
+#include <cstdlib>
 
 using namespace std;
 
@@ -18,18 +19,20 @@ Cache::Cache(int nsets, int bsize, int assoc, char subst)
     calcBits(bsize, nsets, offset_bits, index_bits, tag_bits);
     // Inicializa cada conjunto: vetor de blocos, inicialmente inválidos
     conjuntos.resize(nsets, vector<Bloco>(assoc, {0, false}));
-    // Inicializa o deque de ordem para cada conjunto
-    ordem.resize(nsets);
+    // Se a política for FIFO ou LRU, inicializa o deque de ordem para cada conjunto
+    if (substitutionPolicy == 'F' || substitutionPolicy == 'L') {
+        ordem.resize(nsets);
+    }
 }
 
 void Cache::acessarEndereco(uint32_t endereco) {
     total_acessos++;
     
-    // Extrai tag e índice a partir do endereço
+    // Extrai a tag e o índice do endereço
     uint32_t tag = endereco >> (offset_bits + index_bits);
     uint32_t indice = (endereco >> offset_bits) & ((1 << index_bits) - 1);
     
-    // Procura pelo bloco no conjunto
+    // Procura o bloco no conjunto
     int viaEncontrada = -1;
     for (int via = 0; via < assoc; via++) {
         if (conjuntos[indice][via].valid && conjuntos[indice][via].tag == tag) {
@@ -40,8 +43,7 @@ void Cache::acessarEndereco(uint32_t endereco) {
     
     if (viaEncontrada != -1) { // HIT
         hits++;
-        // Se a política for LRU, atualiza a ordem:
-        // remove a via da posição atual e insere-a no final (mais recentemente usada)
+        // Se a política for LRU, atualiza a ordem: remove a via e a reinsere no final
         if (substitutionPolicy == 'L') {
             auto &fila = ordem[indice];
             for (auto it = fila.begin(); it != fila.end(); ++it) {
@@ -50,7 +52,7 @@ void Cache::acessarEndereco(uint32_t endereco) {
                     break;
                 }
             }
-            ordem[indice].push_back(viaEncontrada);
+            fila.push_back(viaEncontrada);
         }
         return;
     }
@@ -65,23 +67,29 @@ void Cache::acessarEndereco(uint32_t endereco) {
     }
     
     if (viaVazia != -1) {
-        // Miss compulsório: via ainda não preenchida
+        // Miss compulsório: há via não preenchida
         misses_compulsorios++;
         conjuntos[indice][viaVazia].tag = tag;
         conjuntos[indice][viaVazia].valid = true;
-        ordem[indice].push_back(viaVazia);
+        if (substitutionPolicy == 'F' || substitutionPolicy == 'L') {
+            ordem[indice].push_back(viaVazia);
+        }
         occupiedBlocks++;
     } else {
-        // Conjunto cheio: substituição necessária.
-        // Para FIFO e LRU, seleciona o bloco que está no início da fila.
-        int viaSubstituir = ordem[indice].front();
-        ordem[indice].pop_front();
+        // Conjunto cheio: substituição necessária
+        int viaSubstituir;
+        if (substitutionPolicy == 'R') {
+            // Substituição RANDOM: seleciona um índice aleatório entre 0 e (assoc-1)
+            viaSubstituir = rand() % assoc;
+        } else {
+            // Para FIFO ou LRU: seleciona o bloco no início do deque (o mais antigo ou o menos recentemente usado)
+            viaSubstituir = ordem[indice].front();
+            ordem[indice].pop_front();
+        }
         conjuntos[indice][viaSubstituir].tag = tag;
-        // Registra o acesso: insere a via no final
-        ordem[indice].push_back(viaSubstituir);
-        
-        // Classificação do miss: se a cache inteira já estiver cheia, é de capacidade;
-        // caso contrário, é de conflito.
+        if (substitutionPolicy == 'F' || substitutionPolicy == 'L') {
+            ordem[indice].push_back(viaSubstituir);
+        }
         if (occupiedBlocks == numBlocks)
             misses_capacidade++;
         else
