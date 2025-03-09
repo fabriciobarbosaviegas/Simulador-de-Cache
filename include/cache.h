@@ -7,23 +7,28 @@
 
 class Cache {
 public:
-    // Construtor: nsets = número de conjuntos, bsize = tamanho do bloco (em bytes), assoc = grau de associatividade
-    Cache(int nsets, int bsize, int assoc);
+    // Construtor:
+    // nsets: número de conjuntos;
+    // bsize: tamanho do bloco (em bytes);
+    // assoc: grau de associatividade;
+    // substPolicy: política de substituição ('F' para FIFO, 'L' para LRU)
+    Cache(int nsets, int bsize, int assoc, char substPolicy);
 
-    // Processa o acesso ao endereço (32 bits)
+    // Processa o acesso a um endereço (32 bits)
     void acessarEndereco(uint32_t endereco);
 
-    // Exibe as estatísticas da simulação; flag_saida define o formato da saída
+    // Exibe as estatísticas da simulação (flag_saida: 0 = formato detalhado, 1 = formato compacto)
     void exibirEstatisticas(int flag_saida) const;
 
 private:
     int nsets;   // Número de conjuntos
     int bsize;   // Tamanho do bloco (bytes)
     int assoc;   // Grau de associatividade
+    char substitutionPolicy; // 'F' para FIFO ou 'L' para LRU
 
-    int offset_bits; // Número de bits de deslocamento
-    int index_bits;  // Número de bits para o índice do conjunto
-    int tag_bits;    // Número de bits para a tag
+    int offset_bits; // Bits de deslocamento
+    int index_bits;  // Bits para o índice
+    int tag_bits;    // Bits para a tag
 
     int total_acessos;
     int hits;
@@ -34,17 +39,17 @@ private:
     int occupiedBlocks; // Quantidade de blocos já ocupados na cache
     int numBlocks;      // Total de blocos (nsets * assoc)
 
-    // Estrutura que representa um bloco da cache
+    // Representação de um bloco da cache
     struct Bloco {
         uint32_t tag;
         bool valid;
     };
 
-    // Vetor de conjuntos, onde cada conjunto é um vetor de blocos
+    // Vetor de conjuntos – cada conjunto é um vetor de blocos
     std::vector< std::vector<Bloco> > conjuntos;
-
-    // Para cada conjunto, uma fila FIFO armazenando os índices das vias (para substituição)
-    std::vector< std::deque<int> > filas_fifo;
+    // Para cada conjunto, um deque que armazena os índices das vias na ordem de acesso.
+    // Para FIFO, a ordem é de inserção; para LRU, o bloco mais recentemente usado fica no final.
+    std::vector< std::deque<int> > ordem;
 };
 
 #endif // CACHE_H

@@ -1,71 +1,87 @@
 #include "cache.h"
 #include "utils.h"
 #include <iostream>
-#include <vector>
-#include <deque>
-#include <cstdint>
 #include <cstdio>
+#include <cctype>
 
 using namespace std;
 
-// Construtor
-Cache::Cache(int nsets, int bsize, int assoc)
+Cache::Cache(int nsets, int bsize, int assoc, char subst)
     : nsets(nsets), bsize(bsize), assoc(assoc),
+      substitutionPolicy(std::toupper(subst)),
       total_acessos(0), hits(0),
       misses_compulsorios(0), misses_capacidade(0), misses_conflito(0),
       occupiedBlocks(0)
 {
     numBlocks = nsets * assoc;
-    // Calcula os bits de offset, índice e tag (endereço de 32 bits)
+    // Calcula os bits para offset, índice e tag (assume endereços de 32 bits)
     calcBits(bsize, nsets, offset_bits, index_bits, tag_bits);
-    // Inicializa cada conjunto com "assoc" blocos (inicialmente inválidos)
+    // Inicializa cada conjunto: vetor de blocos, inicialmente inválidos
     conjuntos.resize(nsets, vector<Bloco>(assoc, {0, false}));
-    // Inicializa as filas FIFO para cada conjunto
-    filas_fifo.resize(nsets);
+    // Inicializa o deque de ordem para cada conjunto
+    ordem.resize(nsets);
 }
 
 void Cache::acessarEndereco(uint32_t endereco) {
     total_acessos++;
     
-    // Extrai tag e índice
+    // Extrai tag e índice a partir do endereço
     uint32_t tag = endereco >> (offset_bits + index_bits);
     uint32_t indice = (endereco >> offset_bits) & ((1 << index_bits) - 1);
-
-    // Verifica se há HIT
-    bool hitFound = false;
+    
+    // Procura pelo bloco no conjunto
+    int viaEncontrada = -1;
     for (int via = 0; via < assoc; via++) {
-        if (conjuntos[indice][via].valid && (conjuntos[indice][via].tag == tag)) {
-            hits++;
-            hitFound = true;
+        if (conjuntos[indice][via].valid && conjuntos[indice][via].tag == tag) {
+            viaEncontrada = via;
             break;
         }
     }
-    if (hitFound)
-        return;  // Fim: bloco já presente
-
-    // Miss: procura via vazia no conjunto
-    int emptyVia = -1;
+    
+    if (viaEncontrada != -1) { // HIT
+        hits++;
+        // Se a política for LRU, atualiza a ordem:
+        // remove a via da posição atual e insere-a no final (mais recentemente usada)
+        if (substitutionPolicy == 'L') {
+            auto &fila = ordem[indice];
+            for (auto it = fila.begin(); it != fila.end(); ++it) {
+                if (*it == viaEncontrada) {
+                    fila.erase(it);
+                    break;
+                }
+            }
+            ordem[indice].push_back(viaEncontrada);
+        }
+        return;
+    }
+    
+    // MISS: procura uma via vazia no conjunto
+    int viaVazia = -1;
     for (int via = 0; via < assoc; via++) {
         if (!conjuntos[indice][via].valid) {
-            emptyVia = via;
+            viaVazia = via;
             break;
         }
     }
-    if (emptyVia != -1) {
+    
+    if (viaVazia != -1) {
         // Miss compulsório: via ainda não preenchida
         misses_compulsorios++;
-        conjuntos[indice][emptyVia].tag = tag;
-        conjuntos[indice][emptyVia].valid = true;
-        filas_fifo[indice].push_back(emptyVia);
+        conjuntos[indice][viaVazia].tag = tag;
+        conjuntos[indice][viaVazia].valid = true;
+        ordem[indice].push_back(viaVazia);
         occupiedBlocks++;
     } else {
-        // Conjunto cheio: substituição FIFO
-        int via_substituir = filas_fifo[indice].front();
-        filas_fifo[indice].pop_front();
-        conjuntos[indice][via_substituir].tag = tag;
-        filas_fifo[indice].push_back(via_substituir);
+        // Conjunto cheio: substituição necessária.
+        // Para FIFO e LRU, seleciona o bloco que está no início da fila.
+        int viaSubstituir = ordem[indice].front();
+        ordem[indice].pop_front();
+        conjuntos[indice][viaSubstituir].tag = tag;
+        // Registra o acesso: insere a via no final
+        ordem[indice].push_back(viaSubstituir);
         
-        // Classifica o miss: se a cache inteira já estiver cheia, é de capacidade; caso contrário, é de conflito
+        // Classificação do miss: se a cache inteira já estiver cheia, é de capacidade;
+        // caso contrário, é de conflito.
         if (occupiedBlocks == numBlocks)
             misses_capacidade++;
         else
@@ -75,11 +91,11 @@ void Cache::acessarEndereco(uint32_t endereco) {
 
 void Cache::exibirEstatisticas(int flag_saida) const {
     int totalMisses = misses_compulsorios + misses_capacidade + misses_conflito;
-    double hitRatio = (total_acessos > 0) ? (double)hits / total_acessos : 0.0;
+    double hitRatio = (total_acessos > 0) ? static_cast<double>(hits) / total_acessos : 0.0;
     double missRatio = 1.0 - hitRatio;
-    double compulsoryMissRatio = (totalMisses > 0) ? (double)misses_compulsorios / totalMisses : 0.0;
-    double capacityMissRatio   = (totalMisses > 0) ? (double)misses_capacidade / totalMisses : 0.0;
-    double conflictMissRatio   = (totalMisses > 0) ? (double)misses_conflito / totalMisses : 0.0;
+    double compulsoryMissRatio = (totalMisses > 0) ? static_cast<double>(misses_compulsorios) / totalMisses : 0.0;
+    double capacityMissRatio   = (totalMisses > 0) ? static_cast<double>(misses_capacidade) / totalMisses : 0.0;
+    double conflictMissRatio   = (totalMisses > 0) ? static_cast<double>(misses_conflito) / totalMisses : 0.0;
     
     if (flag_saida == 0) {
         std::cout << "Total de acessos: " << total_acessos << "\n";
