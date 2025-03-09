@@ -34,8 +34,8 @@
 
 ## **Políticas de Substituição**
 6. **Implementar FIFO (F)**
-   - [ ] Para cada conjunto, manter uma fila de ordem de inserção.
-   - [ ] Substituir o bloco mais antigo em caso de miss.
+   - [X] Para cada conjunto, manter uma fila de ordem de inserção.
+   - [X] Substituir o bloco mais antigo em caso de miss.
 
 7. **Implementar LRU (L)**
    - [ ] Rastrear o último uso de cada bloco (timestamp ou contador).
@@ -88,8 +88,8 @@
     - [ ] Comentar código para explicar funções críticas.
 
 18. **Tratamento de Erros**
-    - [ ] Validar arquivo de entrada (existência, formato binário).
-    - [ ] Tratar entradas inválidas (ex: `nsets=0`, `assoc > nsets`).
+    - [X] Validar arquivo de entrada (existência, formato binário).
+    - [X] Tratar entradas inválidas (ex: `nsets=0`, `assoc > nsets`).
 
 19. **Otimizações**
     - [ ] Usar estruturas eficientes para LRU (ex: listas encadeadas).
