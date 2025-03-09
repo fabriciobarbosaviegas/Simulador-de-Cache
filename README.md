@@ -34,8 +34,8 @@
 
 ## **Políticas de Substituição**
 6. **Implementar FIFO (F)**
-   - [ ] Para cada conjunto, manter uma fila de ordem de inserção.
-   - [ ] Substituir o bloco mais antigo em caso de miss.
+   - [X] Para cada conjunto, manter uma fila de ordem de inserção.
+   - [X] Substituir o bloco mais antigo em caso de miss.
 
 7. **Implementar LRU (L)**
    - [ ] Rastrear o último uso de cada bloco (timestamp ou contador).

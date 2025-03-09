@@ -1,39 +1,50 @@
 #ifndef CACHE_H
 #define CACHE_H
 
-#include <vector>
 #include <cstdint>
-
-// Estrutura de um bloco da cache
-struct Bloco {
-    uint32_t tag;        // Tag do bloco
-    bool valid;          // Bit de validade
-    uint64_t fifo_counter; // Contador FIFO (ordem de inserção)
-};
+#include <vector>
+#include <deque>
 
 class Cache {
-private:
-    int nsets;              // Número de conjuntos
-    int bsize;              // Tamanho do bloco (bytes)
-    int assoc;              // Associatividade
-    int offset_bits;        // Bits de offset
-    int index_bits;         // Bits de índice
-    int tag_bits;           // Bits de tag
-
-    std::vector<std::vector<Bloco>> conjuntos; // conjuntos[índice][via]
-    uint64_t global_counter = 0; // Contador global para FIFO
-
-    // Estatísticas
-    uint64_t total_acessos = 0;
-    uint64_t hits = 0;
-    uint64_t misses_compulsorios = 0;
-    uint64_t misses_capacidade = 0;
-    uint64_t misses_conflito = 0;
-
 public:
+    // Construtor: nsets = número de conjuntos, bsize = tamanho do bloco (em bytes), assoc = grau de associatividade
     Cache(int nsets, int bsize, int assoc);
+
+    // Processa o acesso ao endereço (32 bits)
     void acessarEndereco(uint32_t endereco);
+
+    // Exibe as estatísticas da simulação; flag_saida define o formato da saída
     void exibirEstatisticas(int flag_saida) const;
+
+private:
+    int nsets;   // Número de conjuntos
+    int bsize;   // Tamanho do bloco (bytes)
+    int assoc;   // Grau de associatividade
+
+    int offset_bits; // Número de bits de deslocamento
+    int index_bits;  // Número de bits para o índice do conjunto
+    int tag_bits;    // Número de bits para a tag
+
+    int total_acessos;
+    int hits;
+    int misses_compulsorios;
+    int misses_capacidade;
+    int misses_conflito;
+
+    int occupiedBlocks; // Quantidade de blocos já ocupados na cache
+    int numBlocks;      // Total de blocos (nsets * assoc)
+
+    // Estrutura que representa um bloco da cache
+    struct Bloco {
+        uint32_t tag;
+        bool valid;
+    };
+
+    // Vetor de conjuntos, onde cada conjunto é um vetor de blocos
+    std::vector< std::vector<Bloco> > conjuntos;
+
+    // Para cada conjunto, uma fila FIFO armazenando os índices das vias (para substituição)
+    std::vector< std::deque<int> > filas_fifo;
 };
 
 #endif // CACHE_H

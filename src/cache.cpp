@@ -1,93 +1,97 @@
 #include "cache.h"
 #include "utils.h"
 #include <iostream>
-#include <algorithm> // Para std::min_element
+#include <vector>
+#include <deque>
+#include <cstdint>
+#include <cstdio>
 
-Cache::Cache(int nsets, int bsize, int assoc) 
-    : nsets(nsets), bsize(bsize), assoc(assoc) {
-    // Calcula bits de offset, índice e tag
+using namespace std;
+
+// Construtor
+Cache::Cache(int nsets, int bsize, int assoc)
+    : nsets(nsets), bsize(bsize), assoc(assoc),
+      total_acessos(0), hits(0),
+      misses_compulsorios(0), misses_capacidade(0), misses_conflito(0),
+      occupiedBlocks(0)
+{
+    numBlocks = nsets * assoc;
+    // Calcula os bits de offset, índice e tag (endereço de 32 bits)
     calcBits(bsize, nsets, offset_bits, index_bits, tag_bits);
-
-    // Inicializa conjuntos e blocos (todos inválidos)
-    conjuntos.resize(nsets);
-    for (auto &conjunto : conjuntos) {
-        conjunto.resize(assoc, {0, false, 0}); // tag=0, valid=false, fifo_counter=0
-    }
+    // Inicializa cada conjunto com "assoc" blocos (inicialmente inválidos)
+    conjuntos.resize(nsets, vector<Bloco>(assoc, {0, false}));
+    // Inicializa as filas FIFO para cada conjunto
+    filas_fifo.resize(nsets);
 }
 
 void Cache::acessarEndereco(uint32_t endereco) {
     total_acessos++;
-
-    // Extrai tag, índice e offset
+    
+    // Extrai tag e índice
     uint32_t tag = endereco >> (offset_bits + index_bits);
     uint32_t indice = (endereco >> offset_bits) & ((1 << index_bits) - 1);
 
-    // Verifica se o bloco está no conjunto (HIT)
-    bool hit = false;
+    // Verifica se há HIT
+    bool hitFound = false;
     for (int via = 0; via < assoc; via++) {
-        if (conjuntos[indice][via].valid && conjuntos[indice][via].tag == tag) {
+        if (conjuntos[indice][via].valid && (conjuntos[indice][via].tag == tag)) {
             hits++;
-            hit = true;
+            hitFound = true;
             break;
         }
     }
+    if (hitFound)
+        return;  // Fim: bloco já presente
 
-    // Trata MISS
-    if (!hit) {
-        bool substituido = false;
-
-        // Procura por bloco inválido (MISS COMPULSÓRIO)
-        for (int via = 0; via < assoc; via++) {
-            if (!conjuntos[indice][via].valid) {
-                conjuntos[indice][via].tag = tag;
-                conjuntos[indice][via].valid = true;
-                conjuntos[indice][via].fifo_counter = ++global_counter;
-                misses_compulsorios++;
-                substituido = true;
-                break;
-            }
+    // Miss: procura via vazia no conjunto
+    int emptyVia = -1;
+    for (int via = 0; via < assoc; via++) {
+        if (!conjuntos[indice][via].valid) {
+            emptyVia = via;
+            break;
         }
-
-        // Se todos os blocos estão válidos, substitui via FIFO
-        if (!substituido) {
-            // Encontra a via com o menor fifo_counter (mais antiga)
-            int via_substituir = 0;
-            uint64_t menor_counter = conjuntos[indice][0].fifo_counter;
-            for (int via = 1; via < assoc; via++) {
-                if (conjuntos[indice][via].fifo_counter < menor_counter) {
-                    menor_counter = conjuntos[indice][via].fifo_counter;
-                    via_substituir = via;
-                }
-            }
-
-            // Substitui e atualiza o contador FIFO
-            conjuntos[indice][via_substituir].tag = tag;
-            conjuntos[indice][via_substituir].fifo_counter = ++global_counter;
-
-            // Classifica o miss (conflito ou capacidade)
-            if (assoc == 1) {
-                misses_conflito++;
-            } else {
-                misses_capacidade++;
-            }
-        }
+    }
+    if (emptyVia != -1) {
+        // Miss compulsório: via ainda não preenchida
+        misses_compulsorios++;
+        conjuntos[indice][emptyVia].tag = tag;
+        conjuntos[indice][emptyVia].valid = true;
+        filas_fifo[indice].push_back(emptyVia);
+        occupiedBlocks++;
+    } else {
+        // Conjunto cheio: substituição FIFO
+        int via_substituir = filas_fifo[indice].front();
+        filas_fifo[indice].pop_front();
+        conjuntos[indice][via_substituir].tag = tag;
+        filas_fifo[indice].push_back(via_substituir);
+        
+        // Classifica o miss: se a cache inteira já estiver cheia, é de capacidade; caso contrário, é de conflito
+        if (occupiedBlocks == numBlocks)
+            misses_capacidade++;
+        else
+            misses_conflito++;
     }
 }
 
 void Cache::exibirEstatisticas(int flag_saida) const {
+    int totalMisses = misses_compulsorios + misses_capacidade + misses_conflito;
+    double hitRatio = (total_acessos > 0) ? (double)hits / total_acessos : 0.0;
+    double missRatio = 1.0 - hitRatio;
+    double compulsoryMissRatio = (totalMisses > 0) ? (double)misses_compulsorios / totalMisses : 0.0;
+    double capacityMissRatio   = (totalMisses > 0) ? (double)misses_capacidade / totalMisses : 0.0;
+    double conflictMissRatio   = (totalMisses > 0) ? (double)misses_conflito / totalMisses : 0.0;
+    
     if (flag_saida == 0) {
         std::cout << "Total de acessos: " << total_acessos << "\n";
-        std::cout << "Hits: " << hits << " (" << (hits / (double)total_acessos) * 100 << "%)\n";
-        std::cout << "Misses: " << (total_acessos - hits) << "\n";
-        std::cout << "  - Compulsórios: " << misses_compulsorios << "\n";
-        std::cout << "  - Capacidade: " << misses_capacidade << "\n";
-        std::cout << "  - Conflito: " << misses_conflito << "\n";
+        std::cout << "Hits: " << hits << " (" << hitRatio * 100 << "%)\n";
+        std::cout << "Misses: " << totalMisses << "\n";
+        std::cout << "  - Misses compulsorios: " << misses_compulsorios << "\n";
+        std::cout << "  - Misses de capacidade: " << misses_capacidade << "\n";
+        std::cout << "  - Misses de conflito: " << misses_conflito << "\n";
     } else {
-        std::cout << total_acessos << " "
-                  << (hits / (double)total_acessos) << " "
-                  << ((total_acessos - hits) / (double)total_acessos) << " "
-                  << (misses_compulsorios / (double)total_acessos) << " "
-                  << (misses_capacidade / (double)total_acessos) << " "
-                  << (misses_conflito / (double)total_acessos) << "\n";
+        // Formatação conforme output esperado
+        printf("%d %.4lf %.4lf %.2lf %.2lf %.2lf\n",
+               total_acessos, hitRatio, missRatio,
+               compulsoryMissRatio, capacityMissRatio, conflictMissRatio);
     }
 }
