@@ -24,11 +24,11 @@ private:
     int nsets;   // Número de conjuntos
     int bsize;   // Tamanho do bloco (bytes)
     int assoc;   // Grau de associatividade
-    char substitutionPolicy; // 'F' para FIFO ou 'L' para LRU
+    char politica_substituicao; // 'F' para FIFO ou 'L' para LRU
 
-    int offset_bits; // Bits de deslocamento
-    int index_bits;  // Bits para o índice
-    int tag_bits;    // Bits para a tag
+    int bits_offset; // Bits de deslocamento
+    int bits_indice;  // Bits para o índice
+    int bits_tag;    // Bits para a tag
 
     int total_acessos;
     int hits;
@@ -36,8 +36,8 @@ private:
     int misses_capacidade;
     int misses_conflito;
 
-    int occupiedBlocks; // Quantidade de blocos já ocupados na cache
-    int numBlocks;      // Total de blocos (nsets * assoc)
+    int blocos_ocupados; // Quantidade de blocos já ocupados na cache
+    int total_blocos;      // Total de blocos (nsets * assoc)
 
     // Representação de um bloco da cache
     struct Bloco {

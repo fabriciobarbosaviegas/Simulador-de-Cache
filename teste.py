@@ -16,7 +16,6 @@ outputs = {
             "RANDOM": ['100 0.9200 0.0800 1.00 0.00 0.00', '1000 0.8640 0.1360 1.00 0.00 0.00', '10000 0.9298 0.0702 0.18 0.79 0.03', '186676 0.8782 0.1218 0.05 0.93 0.02', '186676 0.5440 0.4560 0.00 1.00 0.00', '100 0.43 0.57 0.28 0.68 0.04', '186676 0.5440 0.4560 0.00 1.00 0.00']
         }
 
-acertos = 0
 
 politica = int(input("Digite a política de substituição:\n1 - LRU\n2 - FIFO\n3 - RANDOM\n4 - Todas: "))
 
@@ -24,43 +23,32 @@ if(politica == 1):
     for index, j in enumerate(inputs['LRU']):
         response = subprocess.run(j, shell=True, capture_output = True, text = True) 
 
-        if(response.stdout == outputs['LRU'][index]):
-            acertos += 1
-        else:
-            print("Erro no teste: ", j)
-            print("Output esperado: ", outputs['LRU'][index])
-            print("Output obtido: ", response.stdout)
+        print("Teste: ", j)
+        print("Output esperado: ", outputs['LRU'][index])
+        print("Output obtido: ", response.stdout)
 
 elif(politica == 2):
     for index, j in enumerate(inputs['FIFO']):
         response = subprocess.run(j, shell=True, capture_output = True, text = True) 
 
-        if(response.stdout == outputs['FIFO'][index]):
-            acertos += 1
-        else:
-            print("Erro no teste: ", j)
-            print("Output esperado: ", outputs['FIFO'][index])
-            print("Output obtido: ", response.stdout)
+        print("Teste: ", j)
+        print("Output esperado: ", outputs['FIFO'][index])
+        print("Output obtido: ", response.stdout)
 
 elif(politica == 3):
     for index, j in enumerate(inputs['RANDOM']):
         response = subprocess.run(j, shell=True, capture_output = True, text = True) 
 
-        if(response.stdout == outputs['RANDOM'][index]):
-            acertos += 1
-        else:
-            print("Erro no teste: ", j)
-            print("Output esperado: ", outputs['RANDOM'][index])
-            print("Output obtido: ", response.stdout)
+        print("Teste: ", j)
+        print("Output esperado: ", outputs['RANDOM'][index])
+        print("Output obtido: ", response.stdout)
 
 else:
     for i in inputs:
         for index, j in enumerate(inputs[i]):
             response = subprocess.run(j, shell=True, capture_output = True, text = True) 
 
-            if(response.stdout == j):
-                acertos += 1
-            else:
-                print("Erro no teste: ", j)
+            print("Teste: ", j)
+            print("Output esperado: ", outputs[i][index])
+            print("Output obtido: ", response.stdout)
 
-print('Acertos: ', acertos)
